@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>后台登录</title>
+		<link rel="stylesheet" type="text/css" href="assets/admin/layui/css/layui.css" />
+		<link rel="stylesheet" type="text/css" href="assets/admin/css/login.css" />
+		<script src="assets/js/aJaxUtil.js"></script>
+		<script src="assets/js/jquery-3.3.1.min.js"></script>
+		<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/axios.min.js"></script>
+	</head>
+
+	<body>
+		<div class="m-login-bg">
+			<div class="m-login">
+				<h3>单科学生成绩管理查询系统</h3>
+				<div class="m-login-warp">
+					<form class="layui-form">
+						<div class="layui-form-item">
+							<input type="text" name="userName" id="userName"  required lay-verify="required" placeholder="用户名" autocomplete="off" class="layui-input">
+						</div>
+						<div class="layui-form-item">
+							<input type="password" name="password" id="password" required lay-verify="required" placeholder="密码" autocomplete="off" class="layui-input">
+						</div>
+						<div class="layui-form-item">
+							<input type="radio" name="type" value="1" title="教师" checked="">
+      						<input type="radio" name="type" value="2" title="学生">
+						</div>
+						<!--错误提示框-->
+						<div id="error-message" style="color: red; display: none;"></div>
+						<div class="layui-form-item m-login-btn">
+							<div class="layui-inline">
+								<button class="layui-btn layui-btn-normal" lay-submit lay-filter="login">登录</button>
+							</div>
+							<div class="layui-inline">
+								<button type="reset" class="layui-btn layui-btn-primary">取消</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				<p class="copyright">Copyright 2018-2021 by 学生单科成绩管理系统</p>
+			</div>
+		</div>
+		<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				// 你的 JavaScript 代码
+				document.querySelector('.layui-btn-normal').addEventListener('click', function(event) {
+					event.preventDefault(); // 阻止表单的默认提交行为
+
+					let username = document.querySelector('#userName').value;
+					let password = document.querySelector('#password').value;
+					let selectedValue = document.querySelector('input[name="type"]:checked').value;
+					console.log(username + " " + password+" "+selectedValue);
+					if(selectedValue=="1"){
+						axios({
+							url: "http://localhost:8080/user/teacherLogin",
+							method: "post",
+							data: {
+								username: username,
+								password: password
+							}
+						}).then((result) => {
+							console.log(result);
+							if (result.data.status=="200"){
+								location.href="index.html"
+							}else {
+								//登录失败
+								//location.href="login.html"
+								// 登录失败，显示错误消息
+								const errorMessage = document.getElementById('error-message');
+								errorMessage.textContent = "登录失败，请检查用户名和密码。";
+								errorMessage.style.display = 'block';  // 显示错误消息
+							}
+							// 根据返回结果进行相应的处理，例如跳转到新页面或显示错误信息
+						}).catch((error) => {
+							console.error('登录请求失败:', error);
+							const errorMessage = document.getElementById('error-message');
+							errorMessage.textContent = "网络错误，请稍后再试。";
+							errorMessage.style.display = 'block';  // 显示错误消息
+						});
+					}else if (selectedValue=="2"){
+						axios({
+							url: "http://localhost:8080/user/studentLogin",
+							method: "post",
+							data: {
+								studentName: username,
+								stuPass: password
+							}
+						}).then((result) => {
+							console.log(result);
+							if (result.data.status=="200"){
+								location.href="student-index.html"
+							}else {
+								//登录失败
+								//location.href="login.html"
+								// 登录失败，显示错误消息
+								const errorMessage = document.getElementById('error-message');
+								errorMessage.textContent = "登录失败，请检查用户名和密码。";
+								errorMessage.style.display = 'block';  // 显示错误消息
+							}
+							// 根据返回结果进行相应的处理，例如跳转到新页面或显示错误信息
+						}).catch((error) => {
+							console.error('登录请求失败:', error);
+							const errorMessage = document.getElementById('error-message');
+							errorMessage.textContent = "网络错误，请稍后再试。";
+							errorMessage.style.display = 'block';
+						});
+					}
+				});
+			});
+		</script>
+	</body>
+</html>
