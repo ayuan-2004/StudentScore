@@ -81,8 +81,35 @@
 							errorMessage.textContent = "网络错误，请稍后再试。";
 							errorMessage.style.display = 'block';  // 显示错误消息
 						});
+					}else if (selectedValue=="2"){
+						axios({
+							url: "http://localhost:8080/user/studentLogin",
+							method: "post",
+							data: {
+								studentName: username,
+								stuPass: password
+							}
+						}).then((result) => {
+							console.log(result);
+							if (result.data.status=="200"){
+								location.href="student-index.html"
+							}else {
+								//登录失败
+								//location.href="login.html"
+								// 登录失败，显示错误消息
+								const errorMessage = document.getElementById('error-message');
+								errorMessage.textContent = "登录失败，请检查用户名和密码。";
+								errorMessage.style.display = 'block';  // 显示错误消息
+							}
+							// 根据返回结果进行相应的处理，例如跳转到新页面或显示错误信息
+						}).catch((error) => {
+							console.error('登录请求失败:', error);
+							const errorMessage = document.getElementById('error-message');
+							errorMessage.textContent = "网络错误，请稍后再试。";
+							errorMessage.style.display = 'block';
+						});
 					}
-				})
+				});
 			})
 		</script>
 	</body>

@@ -19,4 +19,6 @@ import java.util.List;
 @Service
 public interface IUserService {
     TUser login(Logindto logindto);
+    //学生登录
+    TStudent tologin(StudentLogin studentLogin);
 }

@@ -19,4 +19,5 @@ public interface UserDao {
     //教师登录
     @Select("select * from t_user WHERE user_name = #{logindto.username} AND pass_word = #{logindto.password}")
     TUser login(@Param("logindto") Logindto logindto);
+
 }

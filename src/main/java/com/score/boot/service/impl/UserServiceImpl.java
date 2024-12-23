@@ -1,5 +1,6 @@
 package com.score.boot.service.impl;
 
+import com.score.boot.dao.TStudentMapper;
 import com.score.boot.model.dto.Logindto;
 import com.score.boot.model.dto.StudentLogin;
 import com.score.boot.model.dto.Studentdtn;
@@ -22,9 +23,14 @@ import java.util.List;
 public class UserServiceImpl implements IUserService {
     @Autowired
     private UserDao userDao;
-
+    @Autowired
+    private TStudentMapper studentMapper;
 
     @Override public TUser login(Logindto logindto) {
         return userDao.login(logindto);
+    }
+
+    @Override public TStudent tologin(StudentLogin studentLogin) {
+        return studentMapper.tologin(studentLogin);
     }
 }
