@@ -17,7 +17,7 @@
 	<div class="page-content-wrap" id="scoreUpdate">
 
 		<form class="layui-form" action="" id="">
-		
+
 			<div class="layui-form-item" style="display: none;">
 				<label class="layui-form-label">成绩编号</label>
   				<div class="layui-input-block">
@@ -26,11 +26,10 @@
 			</div>
 		
 			<div class="layui-form-item">
-				<label class="layui-form-label">请选择学生</label>
+				<label class="layui-form-label">学生姓名</label>
 				<div class="layui-input-block">
-					   <select name="studentId" id="studentId" lay-verify="required"  disabled="disabled"   lay-search="">
-          				<option value="">请选择学生</option>
-       				 </select>
+					<input type="text" name="studentName"  id="studentId" lay-verify="studentName"
+						   placeholder="请输入学生姓名" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
@@ -65,8 +64,58 @@
 		<hr></hr>
 		<h5 style="text-align: center;">@2018.学生单科成绩管理系统</h5>
 	</div>
+	<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
+	<script src="assets/js/axios.min.js"></script>
+	<script>
+		// 获取URL中的查询参数
+		const params = new URLSearchParams(window.location.search);
+		// 获取scoreId参数
+		const scoreId = params.get('scoreId');
+		// 获取studentName参数
+		const studentName = params.get('studentName');
+		// 获取scoreTypeName参数
+		const scoreTypeName = params.get('scoreTypeName');
+		// 获取scoreValue参数
+		const scoreValue = params.get('scoreValue');
 
+		//将获取到的信息返回到页面上
+		if(scoreId && studentName && scoreTypeName && scoreValue){
+			var a=document.querySelector("#studentId").value=studentName;
+			var b=document.querySelector("#scoreType").value=scoreTypeName;
+			var c=document.querySelector("#scoreValue").value=scoreValue;
+		}else {
+			alert("未找到该学生")
+		}
+		document.querySelector(".layui-btn-normal").addEventListener("click", function(event){
+			event.preventDefault();//阻止默认提交
+			//将获取到的信息
+			const studentName =document.querySelector("#studentId").value;
+			const scoreTypeName=document.querySelector("#scoreType").value;
+			const scoreValue=document.querySelector("#scoreValue").value;
+			axios({
+				url:"http://localhost:8080/score/updateScore",
+				method:"post",
+				data:{
+					studentName:studentName,
+					scoreType:scoreTypeName,
+					scoreValue:scoreValue
+				}
+			}).then((result)=>{
+				if (result.data && result.data.status === 200) {
+					alert("修改成功");
+					setTimeout(() => {
+						location.href = "score-list.html";
+					}, 1000);  // 1秒后跳转
+				} else {
+					alert("修改失败");
+					loadStudentData();  // 立即重新加载学生数据，而不是等待页面加载
+				}
+			}).catch((error)=>{
+				console.error('修改请求失败:', error);
+				alert("网络错误，请稍后再试。");
+			})
+		})
+	</script>
 </body>
 
 </html>
-<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>

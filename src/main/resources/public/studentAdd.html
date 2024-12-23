@@ -58,38 +58,39 @@
 	<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
 	<script src="assets/js/axios.min.js"></script>
 	<script>
-		// //添加学生
-		// let addbtn=document.querySelector("#addbtn");
-		// addbtn.onclick=function () {
-		// 	let students = [];
-		// 	let studentName = document.querySelector("#name").value;
-		// 	let studentID = document.querySelector("#studentId").value;
-		// 	let studentSex = document.querySelector("#sex").value;
-		// 	axios({
-		// 		url: "http://localhost:8080/user/selectAddStudent",
-		// 		method: "post",
-		// 		data: {
-		// 			studentNo: studentID,
-		// 			studentName: studentName,
-		// 			studentSex: studentSex
-		// 		}
-		// 	}).then((result) => {
-		// 		if (result.data.status==200){
-		// 			location.href="student-list.html"
-		// 		}else {
-		// 			alert("添加失败")
-		// 		}
-		// 	}).catch((error) => {
-		// 		console.error('查询请求失败:', error);
-		// 		alert("网络错误，请稍后再试");
-		// 	});
-		// }
-		//
-		// //取消添加
-		// let cancelbtn=document.querySelector("#cancelbtn");
-		// cancelbtn.onclick=function (){
-		// 	location.href="student-list.html"
-		// }
+		//添加学生
+		let addbtn=document.querySelector("#addbtn");
+		addbtn.onclick=function (event) {
+			event.preventDefault();//阻止默认提交
+			let students = [];
+			let studentName = document.querySelector("#name").value;
+			let studentID = document.querySelector("#studentId").value;
+			let studentSex = document.querySelector("#sex").value;
+			axios({
+				url: "http://localhost:8080/user/addStudent",
+				method: "post",
+				data: {
+					studentNo: studentID,
+					studentName: studentName,
+					studentSex: studentSex
+				}
+			}).then((result) => {
+				if (result.data.status==200){
+					location.href="student-list.html"
+				}else {
+					alert("添加失败")
+				}
+			}).catch((error) => {
+				console.error('查询请求失败:', error);
+				alert("网络错误，请稍后再试");
+			});
+		}
+
+		//取消添加
+		let cancelbtn=document.querySelector("#cancelbtn");
+		cancelbtn.onclick=function (){
+			location.href="student-list.html"
+		}
 	</script>
 </body>
 </html>

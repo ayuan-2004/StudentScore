@@ -20,15 +20,14 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">请选择学生</label>
 				<div class="layui-input-block">
-					   <select name="studentId" id="studentId" lay-verify="required"  lay-search="">
-          				<option value="">请选择学生</option>
-       				 </select>
+					<input type="text" name="studentName"  id="studentId" lay-verify="studentName"
+						   placeholder="请输入学生姓名" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">测评类别</label>
 				<div class="layui-input-block">
-					<select name="scoreType" lay-verify="required">
+					<select name="scoreType" lay-verify="required" id="scoreType">
 						<option value="">请选择测评类别</option>
 						<option value="1">习题</option>
 						<option value="2">测验</option>
@@ -40,7 +39,7 @@
 				<label class="layui-form-label">分数</label>
 				<div class="layui-input-block">
 					<input type="text" name="scoreValue" lay-verify="scoreValue"
-						placeholder="请输入分数" autocomplete="off" class="layui-input">
+						placeholder="请输入分数" autocomplete="off" class="layui-input" id="scorevalue">
 				</div>
 			</div>
 			<div class="layui-form-item m-login-btn" style="text-align:center">
@@ -49,14 +48,51 @@
 				</div>
 				<div class="layui-inline">
 					<button type="reset" class="layui-btn layui-btn-primary  site-demo-active"
-					data-type="reset">取消添加</button>
+					data-type="reset"
+					onclick="cancelscore()">取消添加</button>
 				</div>
 			</div>
 		</form>
 
 		<hr></hr>
 		<h5 style="text-align: center;">@2018.学生单科成绩管理系统</h5>
+		<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/axios.min.js"></script>
+		<script>
+			//添加
+			document.querySelector(".layui-btn-normal").addEventListener("click", function(event){
+				event.preventDefault();//阻止默认提交
+				let studentId=document.querySelector("#studentId").value;
+				let scoreType=document.querySelector("#scoreType").value;
+				let  scorevalue=document.querySelector("#scorevalue").value;
+				axios({
+					url:"http://localhost:8080/score/addscore",
+					method:"post",
+					data:{
+						studentId:studentId,
+						scoreType:scoreType,
+						scoreValue:scorevalue
+					}
+				}).then((result)=>{
+					if (result.data && result.data.status === 200) {
+						alert("添加成功");
+						setTimeout(() => {
+							location.href = "score-list.html";
+						}, 1000);  // 1秒后跳转
+					} else {
+						alert("添加失败");
+						loadStudentData();  // 立即重新加载学生数据，而不是等待页面加载
+					}
+				}).catch((error)=>{
+					console.error('添加请求失败:', error);
+					alert("网络错误，请稍后再试。");
+				})
+			})
+			//取消添加
+			function cancelscore(){
+				location.href="score-list.html"
+			}
+		</script>
 	</div>
 </body>
 </html>
-<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>

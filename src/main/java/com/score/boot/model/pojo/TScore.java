@@ -14,5 +14,4 @@ public class TScore {
   private int scoreValue;
   private String scoreType;
   private int studentId;
-
 }

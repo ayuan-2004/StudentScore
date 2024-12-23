@@ -19,16 +19,4 @@ public interface UserDao {
 	//教师登录
 	@Select("select * from t_user WHERE user_name = #{logindto.username} AND pass_word = #{logindto.password}")
 	TUser login(@Param("logindto") Logindto logindto);
-	//学生登录
-	@Select("select * from t_student where student_no=#{student.studentName} and stu_pass=#{student.stuPass} and is_delete=0 ")
-	TStudent tologin(@Param("student") StudentLogin studentLogin);
-	//查询所有学生信息
-	@Select("select * from t_student where is_delete=0")
-	List<TStudent> selectAll();
-	//添加学生信息
-	@Insert("insert into t_student value (#{student.studentNo},#{student.studentName},#{student.studentSex},#{student.studentNo},0)")
-	int addStudent(@Param("student") Studentdtn studentdtn);
-	//修改学生信息
-	@Update("update t_student set student_name=#{student.studentName},student_sex=#{student.studentSex} where student_no=#{student.studentNo}")
-	int updateStudent(@Param("student") Studentdtn studentdtn);
 }

@@ -20,10 +20,4 @@ import java.util.List;
 public interface IUserService {
 	TUser login(Logindto logindto);
 	TStudent tologin(StudentLogin studentLogin);
-	//查询
-	List<TStudent> selectAll();
-	//添加
-	int addStudent(Studentdtn studentdtn);
-	//修改
-	int updateStudent(Studentdtn studentdtn);
 }

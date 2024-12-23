@@ -34,11 +34,10 @@
 					autocomplete="off" class="layui-input">
 			</div>
 			<button class="layui-btn layui-btn-normal site-demo-active"
-					data-type="search" id="searchStudent">搜索</button>
+					data-type="search" id="searchStudent" onclick="search()">搜索</button>
 			<table class="layui-table"
-				lay-data="{ url:'/score/getAllSumScore', page:true, id:'scoreSum'}"
 				lay-filter="demo">
-				<thead>
+				<thead id="scoreTable">
 					<tr>
 						<th lay-data="{type:'checkbox', }"></th>
 						<th lay-data="{field:'studentNo',sort: true}">学号</th>
@@ -49,12 +48,123 @@
 						<th lay-data="{field:'sumScore'}">合计成绩</th>
 					</tr>
 				</thead>
+				<tbody id="tbody">
+			<!--	获取到的数据渲染在这里			-->
+				</tbody>
 			</table>
 		</div>
 			<!--	注：本界面所有成绩为计算后的成绩,习题按照16次计算|测验按3次计算|考试成绩按一次计算,未录入成绩的按照0分计算,总成绩计算方式（习题占比10%,测验占比20%,考试占比70%）-->
 		<hr></hr>
 		<h5 style="text-align: center;">@2018.学生单科成绩管理系统</h5>
+		<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/axios.min.js"></script>
+		<script>
+			let totalScore=[];
+			document.addEventListener('DOMContentLoaded', function() {
+				axios({
+					url:"http://localhost:8080/score/selectTotalPerformance",
+					method:"post"
+				}).then((result)=>{
+					if(result.data && result.data.status == 200){
+						totalScore=result.data.data;
+						//清除tbody数据
+						const tableBody = document.querySelector("#tbody");
+
+						if (tableBody) {
+							// 调用渲染方法
+							rendering(tableBody);
+						} else {
+							console.error('Error: tableBody is undefined');
+						}
+					}else {
+						alert("查询出错");
+					}
+				}).catch((error)=>{
+					console.error('请求失败:', error);
+					alert("网络错误，请稍后再试。");
+				});
+			})
+			//模糊查询
+			function search(){
+				let studentNameSearch=document.querySelector("#studentNameSearch").value;
+				axios({
+					url:"http://localhost:8080/score/selectScoreByStudentName",
+					method:"post",
+					data:{
+						studentName:studentNameSearch
+					}
+				}).then((result)=>{
+					console.log(result.data.data)
+					if (result.data.status == 200) {
+						totalScore=result.data.data;
+						//清除tbody数据
+						const tableBody = document.querySelector("#tbody");
+
+						if (tableBody) {
+							// 调用渲染方法
+							rendering(tableBody);
+						} else {
+							console.error('Error: tableBody is undefined');
+						}
+
+					} else {
+						alert("查询失败");
+					}
+				}).catch((error) => {
+					console.error('查询请求失败:', error);
+					alert("网络错误，请稍后再试。");
+				});
+			}
+
+			function rendering(tableBody) {
+				// 清空现有的表格内容
+				tableBody.innerHTML = '';
+
+				// 遍历 totalScore 数组，并为每个学生创建一个新的表格行
+				totalScore.forEach(student => {
+					const row = document.createElement('tr');
+
+					// 创建并添加复选框单元格
+					const checkboxCell = document.createElement('th');
+					const checkbox = document.createElement('input');
+					checkbox.type = 'checkbox';
+					checkboxCell.appendChild(checkbox);
+					row.appendChild(checkboxCell);
+					// 创建并添加学号单元格
+					const studentNoCell = document.createElement('th');
+					studentNoCell.textContent = student.studentNo;
+					row.appendChild(studentNoCell);
+
+					// 创建并添加姓名单元格
+					const studentNameCell = document.createElement('th');
+					studentNameCell.textContent = student.studentName;
+					row.appendChild(studentNameCell);
+
+					// 创建并添加习题成绩单元格
+					const score1Cell = document.createElement('th');
+					score1Cell.textContent = student.exerciseGrades; // 确保属性名与后端返回的数据一致
+					row.appendChild(score1Cell);
+
+					// 创建并添加测验成绩单元格
+					const score2Cell = document.createElement('th');
+					score2Cell.textContent = student.testScore; // 确保属性名与后端返回的数据一致
+					row.appendChild(score2Cell);
+
+					// 创建并添加考试成绩单元格
+					const score3Cell = document.createElement('th');
+					score3Cell.textContent = student.examinationResults; // 确保属性名与后端返回的数据一致
+					row.appendChild(score3Cell);
+
+					// 创建并添加合计成绩单元格
+					const sumScoreCell = document.createElement('th');
+					sumScoreCell.textContent = student.totalScore; // 确保属性名与后端返回的数据一致
+					row.appendChild(sumScoreCell);
+
+					// 将新创建的行添加到表格主体
+					tableBody.appendChild(row);
+				});
+			}
+		</script>
 	</div>
 </body>
 </html>
-<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>

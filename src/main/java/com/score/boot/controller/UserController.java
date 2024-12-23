@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+
+//学生信息操作+登录
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -52,48 +54,6 @@ public class UserController {
 				return new ResponseUtils<>(200,"学生登录成功");
 			}
 		}catch(Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-	//查询所有学生
-	@RequestMapping("/selectAllStudent")
-	public ResponseUtils selectAll(){
-		try {
-			List<TStudent> tStudents = userService.selectAll();
-			if (tStudents != null){
-				return new ResponseUtils<>(200,"查询成功",tStudents);
-			}else {
-				return new ResponseUtils<>(503,"查询失败");
-			}
-		}catch (Exception e){
-			throw new RuntimeException(e);
-		}
-	}
-	//添加学生
-	@RequestMapping("selectAddStudent")
-	public ResponseUtils addStudent(@RequestBody Studentdtn studentdtn){
-		try {
-			int i = userService.addStudent(studentdtn);
-			if (i == 1){
-				return new ResponseUtils<>(200,"添加成功");
-			}else {
-				return new ResponseUtils<>(306,"添加失败");
-			}
-		}catch (Exception e){
-			throw new RuntimeException(e);
-		}
-	}
-	//修改学生信息
-	@RequestMapping("updateStudent")
-	public ResponseUtils updateStudent(@RequestBody Studentdtn studentdtn){
-		try {
-			int i = userService.updateStudent(studentdtn);
-			if (i == 1){
-				return new ResponseUtils<>(200,"修改成功");
-			}else {
-				return new ResponseUtils<>(305,"修改失败");
-			}
-		}catch (Exception e){
 			throw new RuntimeException(e);
 		}
 	}

@@ -53,116 +53,116 @@
 </div>
 <script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
 <script src="assets/js/axios.min.js"></script>
-<!--	<script>-->
-<!--		//查询所有学生-->
-<!--		// 定义一个变量来存储所有学生数据-->
-<!--		let students = [];-->
-<!--		// 定义一个函数来加载学生数据-->
-<!--		function loadStudentData(searchName = '') {-->
-<!--			axios({-->
-<!--				url: "http://localhost:8080/user/selectAllStudent",-->
-<!--				method: "post"// 传递搜索条件-->
-<!--			}).then((response) => {-->
-<!--				if (response.data.status === 200) {-->
-<!--					students = response.data.data;  // 存储学生数据-->
-<!--					renderStudentTable();  // 渲染表格-->
-<!--				} else {-->
-<!--					alert("查询失败");-->
-<!--				}-->
-<!--			}).catch((error) => {-->
-<!--				console.error('查询请求失败:', error);-->
-<!--				alert("网络错误，请稍后再试。");-->
-<!--			});-->
-<!--		}-->
-<!--		// 定义一个函数来渲染表格-->
-<!--		function renderStudentTable() {-->
-<!--			const tableBody = document.getElementById('studentTableBody');-->
-<!--			tableBody.innerHTML = '';  // 清空表格内容-->
+	<script>
+		//查询所有学生
+		// 定义一个变量来存储所有学生数据
+		let students = [];
+		// 定义一个函数来加载学生数据
+		function loadStudentData(searchName = '') {
+			axios({
+				url: "http://localhost:8080/user/selectAllStudent",
+				method: "post"// 传递搜索条件
+			}).then((response) => {
+				if (response.data.status === 200) {
+					students = response.data.data;  // 存储学生数据
+					renderStudentTable();  // 渲染表格
+				} else {
+					alert("查询失败");
+				}
+			}).catch((error) => {
+				console.error('查询请求失败:', error);
+				alert("网络错误，请稍后再试。");
+			});
+		}
+		// 定义一个函数来渲染表格
+		function renderStudentTable() {
+			const tableBody = document.getElementById('studentTableBody');
+			tableBody.innerHTML = '';  // 清空表格内容
 
-<!--			students.forEach(student => {-->
-<!--				const row = document.createElement('tr');-->
-<!--				row.innerHTML = `-->
-<!--            <td><input type="checkbox" name="studentCheck" value="${student.studentNo}"></td>-->
-<!--            <td>${student.studentNo}</td>-->
-<!--            <td>${student.studentName}</td>-->
-<!--            <td>${student.studentSex}</td>-->
-<!--            <td>-->
-<!--                <a class="layui-btn layui-btn-normal layui-btn-sm" onclick="viewStudentDetail(${student.studentNo})">查看</a>-->
-<!--                <a class="layui-btn layui-btn-sm" onclick="editStudent(${student.studentNo})">编辑</a>-->
-<!--                <a class="layui-btn layui-btn-danger layui-btn-sm" onclick="deleteStudent(${student.studentNo})">删除</a>-->
-<!--            </td>-->
-<!--        `;-->
-<!--				tableBody.appendChild(row);-->
-<!--			});-->
-<!--		}-->
-<!--		//添加学生-->
-<!--		//获取添加按钮-->
-<!--		let pushbtn=document.querySelector(".layui-btn");-->
-<!--		pushbtn.onclick=function (){-->
-<!--			location.href="studentAdd.html"-->
-<!--		}-->
+			students.forEach(student => {
+				const row = document.createElement('tr');
+				row.innerHTML = `
+            <td><input type="checkbox" name="studentCheck" value="${student.studentNo}"></td>
+            <td>${student.studentNo}</td>
+            <td>${student.studentName}</td>
+            <td>${student.studentSex}</td>
+            <td>
+                <a class="layui-btn layui-btn-normal layui-btn-sm" onclick="viewStudentDetail(${student.studentNo})">查看</a>
+                <a class="layui-btn layui-btn-sm" onclick="editStudent(${student.studentNo})">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-sm" onclick="deleteStudent(${student.studentNo})">删除</a>
+            </td>
+        `;
+				tableBody.appendChild(row);
+			});
+		}
+		//添加学生
+		//获取添加按钮
+		let pushbtn=document.querySelector(".layui-btn");
+		pushbtn.onclick=function (){
+			location.href="studentAdd.html"
+		}
 
-<!--		// 使用事件委托处理所有编辑按钮的点击事件-->
-<!--		document.addEventListener('DOMContentLoaded', function () {-->
-<!--			document.getElementById('studentTableBody').addEventListener('click', function (event) {-->
-<!--				if (event.target.classList.contains('layui-btn-sm') && event.target.closest('a').getAttribute('onclick') === 'editStudent({ studentNo })') {-->
-<!--					// 获取当前行的 studentNo-->
-<!--					let studentNo = event.target.closest('tr').querySelector('td:nth-child(2)').textContent;-->
+		// 使用事件委托处理所有编辑按钮的点击事件
+		document.addEventListener('DOMContentLoaded', function () {
+			document.getElementById('studentTableBody').addEventListener('click', function (event) {
+				if (event.target.classList.contains('layui-btn-sm') && event.target.closest('a').getAttribute('onclick') === 'editStudent({ studentNo })') {
+					// 获取当前行的 studentNo
+					let studentNo = event.target.closest('tr').querySelector('td:nth-child(2)').textContent;
 
-<!--					// 调用 editStudent 函数-->
-<!--					editStudent(studentNo);-->
-<!--				}-->
-<!--			});-->
-<!--		});-->
+					// 调用 editStudent 函数
+					editStudent(studentNo);
+				}
+			});
+		});
 
-<!--		//修改学生信息-->
-<!--		// 修改后的 editStudent 函数，接收 studentNo 参数-->
-<!--		function editStudent(studentNo) {-->
-<!--			// 根据 studentNo 查找对应的学生数据-->
-<!--			const student = students.find(s => s.studentNo === studentNo);-->
-<!--			if (student) {-->
+		//修改学生信息
+		// 修改后的 editStudent 函数，接收 studentNo 参数
+		function editStudent(studentNo) {
+			// 根据 studentNo 查找对应的学生数据
+			const student = students.find(s => s.studentNo === studentNo);
+			if (student) {
 
-<!--				// 跳转到编辑页面，并通过 URL 参数传递学生信息-->
-<!--				location.href = `studentEdit.html?studentNo=${encodeURIComponent(student.studentNo)}&studentName=${encodeURIComponent(student.studentName)}&studentSex=${encodeURIComponent(student.studentSex)}`;-->
-<!--			} else {-->
-<!--				alert("未找到该学生信息");-->
-<!--			}-->
-<!--		}-->
-<!--		//查看-->
-<!--		// 使用事件委托处理所有查看按钮的点击事件-->
-<!--		document.addEventListener('DOMContentLoaded', function () {-->
-<!--			document.getElementById('studentTableBody').addEventListener('click', function (event) {-->
-<!--				if (event.target.classList.contains('layui-btn-sm') && event.target.closest('a').getAttribute('onclick') === 'viewStudentDetail(${student.studentNo})') {-->
-<!--					// 获取当前行的 studentNo-->
-<!--					let studentNo = event.target.closest('tr').querySelector('td:nth-child(2)').textContent;-->
+				// 跳转到编辑页面，并通过 URL 参数传递学生信息
+				location.href = `studentEdit.html?studentNo=${encodeURIComponent(student.studentNo)}&studentName=${encodeURIComponent(student.studentName)}&studentSex=${encodeURIComponent(student.studentSex)}`;
+			} else {
+				alert("未找到该学生信息");
+			}
+		}
+		//查看
+		// 使用事件委托处理所有查看按钮的点击事件
+		document.addEventListener('DOMContentLoaded', function () {
+			document.getElementById('studentTableBody').addEventListener('click', function (event) {
+				if (event.target.classList.contains('layui-btn-sm') && event.target.closest('a').getAttribute('onclick') === 'viewStudentDetail(${student.studentNo})') {
+					// 获取当前行的 studentNo
+					let studentNo = event.target.closest('tr').querySelector('td:nth-child(2)').textContent;
 
-<!--					// 调用 viewStudentDetail 函数-->
-<!--					viewStudentDetail(studentNo);-->
-<!--				}-->
-<!--			});-->
-<!--		});-->
-<!--		function viewStudentDetail(studentNo){-->
-<!--			// 根据 studentNo 查找对应的学生数据-->
-<!--			const student = students.find(s => s.studentNo === studentNo);-->
-<!--			if (student) {-->
+					// 调用 viewStudentDetail 函数
+					viewStudentDetail(studentNo);
+				}
+			});
+		});
+		function viewStudentDetail(studentNo){
+			// 根据 studentNo 查找对应的学生数据
+			const student = students.find(s => s.studentNo === studentNo);
+			if (student) {
 
-<!--				// 跳转到编辑页面，并通过 URL 参数传递学生信息-->
-<!--				location.href = `studentEdit.html?studentNo=${encodeURIComponent(student.studentNo)}&studentName=${encodeURIComponent(student.studentName)}&studentSex=${encodeURIComponent(student.studentSex)}`;-->
-<!--			} else {-->
-<!--				alert("未找到该学生信息");-->
-<!--			}-->
-<!--		}-->
-<!--		//删除-->
-<!--		// 使用事件委托处理所有删除按钮的点击事件-->
-<!--		function deleteStudent(studentNo){-->
-<!--			if(confirm("你确定删除该学生吗？")){-->
+				// 跳转到编辑页面，并通过 URL 参数传递学生信息
+				location.href = `studentEdit.html?studentNo=${encodeURIComponent(student.studentNo)}&studentName=${encodeURIComponent(student.studentName)}&studentSex=${encodeURIComponent(student.studentSex)}`;
+			} else {
+				alert("未找到该学生信息");
+			}
+		}
+		//删除
+		// 使用事件委托处理所有删除按钮的点击事件
+		function deleteStudent(studentNo){
+			if(confirm("你确定删除该学生吗？")){
 
-<!--			}-->
-<!--		}-->
-<!--		//刷新页面-->
-<!--		window.onload = function() {-->
-<!--			loadStudentData();  // 页面加载时自动加载所有学生数据-->
-<!--		};-->
-<!--	</script>-->
+			}
+		}
+		//刷新页面
+		window.onload = function() {
+			loadStudentData();  // 页面加载时自动加载所有学生数据
+		};
+	</script>
 </body>
 </html>

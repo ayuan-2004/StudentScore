@@ -57,72 +57,72 @@
 	</div>
 	<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
 	<script src="assets/js/axios.min.js"></script>
-<!--	<script>-->
-<!--		//接受传过来的数据并渲染到页面上-->
-<!--		// 获取 URL 参数-->
-<!--		function getQueryParam(param) {-->
-<!--			const urlParams = new URLSearchParams(window.location.search);-->
-<!--			return urlParams.get(param);-->
-<!--		}-->
+	<script>
+		//接受传过来的数据并渲染到页面上
+		// 获取 URL 参数
+		function getQueryParam(param) {
+			const urlParams = new URLSearchParams(window.location.search);
+			return urlParams.get(param);
+		}
 
-<!--		// 获取学生信息-->
-<!--		let studentNo = getQueryParam('studentNo');-->
-<!--		let studentName = getQueryParam('studentName');-->
-<!--		let studentSex = getQueryParam('studentSex');-->
+		// 获取学生信息
+		let studentNo = getQueryParam('studentNo');
+		let studentName = getQueryParam('studentName');
+		let studentSex = getQueryParam('studentSex');
 
-<!--		if (studentNo && studentName && studentSex){-->
-<!--			//将学生信息返回到对应的表单中-->
-<!--			document.querySelector("#studentNo").value = studentNo;-->
-<!--			document.querySelector("#studentName").value = studentName;-->
-<!--			document.querySelector(".studentSex").value = studentSex;-->
+		if (studentNo && studentName && studentSex){
+			//将学生信息返回到对应的表单中
+			document.querySelector("#studentNo").value = studentNo;
+			document.querySelector("#studentName").value = studentName;
+			document.querySelector(".studentSex").value = studentSex;
 
-<!--		}else {-->
-<!--			alert("未找到该学生信息")-->
-<!--		}-->
-<!--		//修改学生信息-->
-<!--		let cancelbtn=document.querySelector(".layui-btn-primary");-->
-<!--		let savebtn=document.querySelector("#save");-->
-<!--		//保存-->
-<!--		savebtn.onclick=function (event){-->
-<!--			event.preventDefault();//阻止默认提交-->
-<!--			//获取修改的内容-->
-<!--			const studentID =document.querySelector("#studentNo").value;-->
-<!--			const studentName=document.querySelector("#studentName").value;-->
-<!--			const studentSex=document.querySelector(".studentSex").value;-->
-<!--			//console.log(studentID+studentName+studentSex)-->
-<!--			axios({-->
-<!--				url: "http://localhost:8080/user/updateStudent",-->
-<!--				method: "post",-->
-<!--				data: {-->
-<!--					studentNo: studentID,-->
-<!--					studentName: studentName,-->
-<!--					studentSex: studentSex-->
-<!--				}-->
-<!--			}).then((result) => {-->
-<!--				// console.log("完整的响应对象:", result);  // 打印完整的响应对象-->
-<!--				// console.log("响应数据:", result.data);   // 打印响应数据-->
-<!--				if (result.data && result.data.status === 200) {-->
-<!--					//location.href="student-list.html"-->
-<!--					alert("修改成功");-->
-<!--					//使用 setTimeout 延迟跳转，确保用户能看到提示-->
-<!--					setTimeout(() => {-->
-<!--						location.href = "student-list.html";-->
-<!--					}, 1000);  // 1秒后跳转-->
-<!--				} else {-->
-<!--					alert("修改失败");-->
-<!--					loadStudentData();  // 立即重新加载学生数据，而不是等待页面加载-->
-<!--				}-->
-<!--			}).catch((error) => {-->
-<!--				console.error('修改请求失败:', error);-->
-<!--				alert("网络错误，请稍后再试。");-->
-<!--			});-->
+		}else {
+			alert("未找到该学生信息")
+		}
+		//修改学生信息
+		let cancelbtn=document.querySelector(".layui-btn-primary");
+		let savebtn=document.querySelector("#save");
+		//保存
+		savebtn.onclick=function (event){
+			event.preventDefault();//阻止默认提交
+			//获取修改的内容
+			const studentID =document.querySelector("#studentNo").value;
+			const studentName=document.querySelector("#studentName").value;
+			const studentSex=document.querySelector(".studentSex").value;
+			//console.log(studentID+studentName+studentSex)
+			axios({
+				url: "http://localhost:8080/user/updateStudent",
+				method: "post",
+				data: {
+					studentNo: studentID,
+					studentName: studentName,
+					studentSex: studentSex
+				}
+			}).then((result) => {
+				// console.log("完整的响应对象:", result);  // 打印完整的响应对象
+				// console.log("响应数据:", result.data);   // 打印响应数据
+				if (result.data && result.data.status === 200) {
+					//location.href="student-list.html"
+					alert("修改成功");
+					//使用 setTimeout 延迟跳转，确保用户能看到提示
+					setTimeout(() => {
+						location.href = "student-list.html";
+					}, 1000);  // 1秒后跳转
+				} else {
+					alert("修改失败");
+					loadStudentData();  // 立即重新加载学生数据，而不是等待页面加载
+				}
+			}).catch((error) => {
+				console.error('修改请求失败:', error);
+				alert("网络错误，请稍后再试。");
+			});
 
-<!--		}-->
-<!--		//取消-->
-<!--		cancelbtn.onclick=function (){-->
-<!--			location.href="student-list.html"-->
-<!--		}-->
-<!--	</script>-->
+		}
+		//取消
+		cancelbtn.onclick=function (){
+			location.href="student-list.html"
+		}
+	</script>
 </body>
 
 </html>

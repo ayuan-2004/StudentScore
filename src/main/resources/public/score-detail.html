@@ -21,7 +21,7 @@
 				<div class="grid-demo grid-demo-bg1 lableInfo">成绩编号</div>
 			</div>
 			<div class="layui-col-xs6">
-				<div class="grid-demo" id="scoreId">6/12</div>
+				<div class="grid-demo" id="scoreId"></div>
 			</div>
 		</div>
 		<div class="layui-row">
@@ -29,7 +29,7 @@
 				<div class="grid-demo grid-demo-bg1 lableInfo">学生姓名</div>
 			</div>
 			<div class="layui-col-xs6">
-				<div class="grid-demo" id="studentName">6/12</div>
+				<div class="grid-demo" id="studentName"></div>
 			</div>
 		</div>
 		<div class="layui-row">
@@ -37,7 +37,7 @@
 				<div class="grid-demo grid-demo-bg1 lableInfo">考试类型</div>
 			</div>
 			<div class="layui-col-xs6">
-				<div class="grid-demo" id="scoreType">6/12</div>
+				<div class="grid-demo" id="scoreType"></div>
 			</div>
 		</div>
 		<div class="layui-row">
@@ -45,16 +45,42 @@
 				<div class="grid-demo grid-demo-bg1 lableInfo">考试成绩</div>
 			</div>
 			<div class="layui-col-xs6">
-				<div class="grid-demo" id="scoreValue">6/12</div>
+				<div class="grid-demo" id="scoreValue"></div>
 			</div>
 		</div>
-
+		<div class="layui-inline"  style="right: -1041px">
+			<button type="reset" class="layui-btn layui-btn-primary  site-demo-active"
+					data-type="reset"  onclick="cancel()">退出</button>
+		</div>
 
 		<hr></hr>
 		<h5 style="text-align: center;">@2018.学生单科成绩管理系统</h5>
 	</div>
-
+	<script src="assets/js/axios.min.js"></script>
+	<script>
+		// 获取URL中的查询参数
+		const params = new URLSearchParams(window.location.search);
+		// 获取scoreId参数
+		const scoreId = params.get('scoreId');
+		// 获取studentName参数
+		const studentName = params.get('studentName');
+		// 获取scoreTypeName参数
+		const scoreTypeName = params.get('scoreTypeName');
+		// 获取scoreValue参数
+		const scoreValue = params.get('scoreValue');
+		//渲染
+		let scoreid=document.querySelector("#scoreId");
+		let studentname=document.querySelector("#studentName");
+		let scoreName=document.querySelector("#scoreType");
+		let scorevalue=document.querySelector("#scoreValue");
+		scoreid.innerHTML=scoreId;
+		studentname.innerHTML=studentName;
+		scoreName.innerHTML=scoreTypeName;
+		scorevalue.innerHTML=scoreValue;
+		//取消
+		function cancel(){
+			location.href="score-list.html"
+		}
+	</script>
 </body>
-
 </html>
-<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>

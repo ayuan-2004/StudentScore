@@ -29,33 +29,6 @@ public class UserServiceImpl implements IUserService {
 		return studentMapper.tologin(studentLogin);
 	}
 
-	@Override public List<TStudent> selectAll() {
-		List<TStudent> tStudents = userDao.selectAll();
-		if (tStudents != null){
-			return tStudents;
-		}else {
-			return null;
-		}
-	}
-
-	@Override public int addStudent(Studentdtn studentdtn) {
-		int i = userDao.addStudent(studentdtn);
-		if (i >0){
-			return 1;
-		}else {
-			return 0;
-		}
-	}
-
-	@Override public int updateStudent(Studentdtn studentdtn) {
-		int i = userDao.updateStudent(studentdtn);
-		if (i >0){
-			return 1;
-		}else {
-			return 0;
-		}
-	}
-
 	@Override public TUser login(Logindto logindto) {
 		return userDao.login(logindto);
 	}

@@ -13,5 +13,5 @@ public class TStudent {
   private String studentName;
   private String studentSex;
   private String stuPass;
-  private String isDelete;
+  private int isDelete;
 }

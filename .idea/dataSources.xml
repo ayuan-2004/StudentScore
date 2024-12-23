@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="@localhost" uuid="635740eb-ab85-4482-b32e-ec299fed8586">
+    <data-source source="LOCAL" name="@47.109.206.82" uuid="7181295d-d926-4ff1-a0b5-7ca9374b18c9">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306</jdbc-url>
+      <jdbc-url>jdbc:mysql://47.109.206.82:3306</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
@@ -14,13 +14,13 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="score@localhost" uuid="bcf3407a-8075-4aa9-8c66-d024a56ec48e">
+    <data-source source="LOCAL" name="Inch_score@47.109.206.82" uuid="62f46271-9b37-4213-8bf4-279bab3fdb59">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
       <remarks>$PROJECT_DIR$/src/main/resources/application.yml</remarks>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/score?characterEncoding=utf8</jdbc-url>
+      <jdbc-url>jdbc:mysql://47.109.206.82:3306/Inch_score?useSSL=false&amp;serverTimezone=UTC&amp;characterEncoding=utf8&amp;characterSetResults=utf8&amp;allowPublicKeyRetrieval=true</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
