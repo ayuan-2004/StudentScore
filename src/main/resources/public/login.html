@@ -53,8 +53,8 @@
 					let username = document.querySelector('#userName').value;
 					let password = document.querySelector('#password').value;
 					let selectedValue = document.querySelector('input[name="type"]:checked').value;
-					console.log(username + " " + password+" "+selectedValue);
-					if(selectedValue=="1"){
+					console.log(username + " " + password + " " + selectedValue);
+					if (selectedValue == "1") {
 						axios({
 							url: "http://localhost:8080/user/teacherLogin",
 							method: "post",
@@ -64,9 +64,9 @@
 							}
 						}).then((result) => {
 							console.log(result);
-							if (result.data.status=="200"){
-								location.href="index.html"
-							}else {
+							if (result.data.status == "200") {
+								location.href = "index.html"
+							} else {
 								//登录失败
 								//location.href="login.html"
 								// 登录失败，显示错误消息
@@ -107,7 +107,7 @@
 						});
 					}
 				});
-			});
+			})
 		</script>
 	</body>
 </html>

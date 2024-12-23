@@ -21,15 +21,16 @@ import java.util.List;
  */
 @Service //标识为服务类
 public class UserServiceImpl implements IUserService {
-	@Autowired
-	private UserDao userDao;
-	@Autowired
-	private TStudentMapper studentMapper;
-	@Override public TStudent tologin(StudentLogin studentLogin) {
-		return studentMapper.tologin(studentLogin);
-	}
+    @Autowired
+    private UserDao userDao;
+    @Autowired
+    private TStudentMapper studentMapper;
 
-	@Override public TUser login(Logindto logindto) {
-		return userDao.login(logindto);
-	}
+    @Override public TUser login(Logindto logindto) {
+        return userDao.login(logindto);
+    }
+
+    @Override public TStudent tologin(StudentLogin studentLogin) {
+        return studentMapper.tologin(studentLogin);
+    }
 }
