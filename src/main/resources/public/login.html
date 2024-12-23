@@ -45,14 +45,45 @@
 		</div>
 		<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
 		<script>
-			function login(){
+			document.addEventListener('DOMContentLoaded', function() {
+				// 你的 JavaScript 代码
+				document.querySelector('.layui-btn-normal').addEventListener('click', function(event) {
+					event.preventDefault(); // 阻止表单的默认提交行为
+
+					let username = document.querySelector('#userName').value;
+					let password = document.querySelector('#password').value;
 					let selectedValue = document.querySelector('input[name="type"]:checked').value;
-					if(selectedValue=="1"){
-						location.href="index.html"
-					}else if(selectedValue=="2"){
-						location.href="score.html"
+					console.log(username + " " + password + " " + selectedValue);
+					if (selectedValue == "1") {
+						axios({
+							url: "http://localhost:8080/user/teacherLogin",
+							method: "post",
+							data: {
+								username: username,
+								password: password
+							}
+						}).then((result) => {
+							console.log(result);
+							if (result.data.status == "200") {
+								location.href = "index.html"
+							} else {
+								//登录失败
+								//location.href="login.html"
+								// 登录失败，显示错误消息
+								const errorMessage = document.getElementById('error-message');
+								errorMessage.textContent = "登录失败，请检查用户名和密码。";
+								errorMessage.style.display = 'block';  // 显示错误消息
+							}
+							// 根据返回结果进行相应的处理，例如跳转到新页面或显示错误信息
+						}).catch((error) => {
+							console.error('登录请求失败:', error);
+							const errorMessage = document.getElementById('error-message');
+							errorMessage.textContent = "网络错误，请稍后再试。";
+							errorMessage.style.display = 'block';  // 显示错误消息
+						});
 					}
-				}
+				})
+			})0
 		</script>
 	</body>
 </html>

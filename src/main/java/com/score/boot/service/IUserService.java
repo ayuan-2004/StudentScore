@@ -18,5 +18,5 @@ import java.util.List;
  */
 @Service
 public interface IUserService {
-
+    TUser login(Logindto logindto);
 }

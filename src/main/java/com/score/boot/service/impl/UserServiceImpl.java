@@ -1,6 +1,5 @@
 package com.score.boot.service.impl;
 
-import com.score.boot.dao.TStudentMapper;
 import com.score.boot.model.dto.Logindto;
 import com.score.boot.model.dto.StudentLogin;
 import com.score.boot.model.dto.Studentdtn;
@@ -21,5 +20,11 @@ import java.util.List;
  */
 @Service //标识为服务类
 public class UserServiceImpl implements IUserService {
+    @Autowired
+    private UserDao userDao;
 
+
+    @Override public TUser login(Logindto logindto) {
+        return userDao.login(logindto);
+    }
 }
