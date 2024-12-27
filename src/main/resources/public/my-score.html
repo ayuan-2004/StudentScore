@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport"
+		  content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>网站后台管理模版</title>
+	<link rel="stylesheet" type="text/css"
+		  href="static/assets/layui/css/layui.css" />
+	<link rel="stylesheet" type="text/css" href="static/assets/css/admin.css" />
+	<style>
+		/* 页面整体样式 */
+		.page-content-wrap {
+			padding: 15px;
+			background-color: #f2f2f2;
+		}
+
+		/* 页面标题 */
+		.page-title {
+			font-size: 20px;
+			color: #333;
+			margin-bottom: 10px;
+		}
+
+		.student-info {
+			color: #666;
+			font-size: 14px;
+			margin-top: 5px;
+		}
+
+		/* 成绩卡片样式 */
+		.score-card {
+			transition: all 0.3s;
+			border-radius: 4px;
+		}
+
+		.score-card:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+		}
+
+		.score-card .layui-card-header {
+			font-weight: bold;
+			color: #333;
+		}
+
+		.score-value {
+			font-size: 28px;
+			color: #009688;
+			margin: 10px 0;
+			font-weight: bold;
+		}
+
+		.score-percent {
+			color: #999;
+			font-size: 12px;
+		}
+
+		/* 总成绩卡片特殊样式 */
+		.total-score-card {
+			background: linear-gradient(135deg, #009688, #5FB878);
+		}
+
+		.total-score-card .layui-card-header,
+		.total-score-card .score-value,
+		.total-score-card .score-status {
+			color: #fff;
+		}
+
+		/* 表格样式优化 */
+		.layui-table {
+			margin-top: 15px;
+		}
+
+		.layui-table thead tr {
+			background-color: #f8f8f8;
+		}
+	</style>
+</head>
+
+<body>
+<div class="page-content-wrap" id="studentSearch">
+	<!-- 头部信息卡片 -->
+	<div class="layui-card">
+		<div class="layui-card-header">
+			<h2 class="page-title">个人成绩查询</h2>
+		</div>
+
+		<!-- 成绩概览 -->
+		<div class="layui-card-body">
+			<div class="layui-row layui-col-space15">
+				<!-- 习题成绩卡片 -->
+				<div class="layui-col-md3">
+					<div class="layui-card score-card">
+						<div class="layui-card-header">习题成绩</div>
+						<div class="layui-card-body" id="exerciseGrades">
+							<h3 class="score-value">--</h3>
+							<p class="score-percent">占总成绩30%</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- 测验成绩卡片 -->
+				<div class="layui-col-md3">
+					<div class="layui-card score-card">
+						<div class="layui-card-header">测验成绩</div>
+						<div class="layui-card-body" id="testScore">
+							<h3 class="score-value">--</h3>
+							<p class="score-percent">占总成绩30%</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- 考试成绩卡片 -->
+				<div class="layui-col-md3">
+					<div class="layui-card score-card">
+						<div class="layui-card-header">考试成绩</div>
+						<div class="layui-card-body" id="examinationResults">
+							<h3 class="score-value">--</h3>
+							<p class="score-percent">占总成绩40%</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- 总成绩卡片 -->
+				<div class="layui-col-md3">
+					<div class="layui-card total-score-card">
+						<div class="layui-card-header">总成绩</div>
+						<div class="layui-card-body" id="totalScore">
+							<h3 class="score-value">--</h3>
+							<p class="score-status">未计算</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	<!--	注：本界面所有成绩为计算后的成绩,习题按照16次计算|测验按3次计算|考试成绩按一次计算,未录入成绩的按照0分计算,总成绩计算方式（习题占比10%,测验占比20%,考试占比70%）-->
+	<hr></hr>
+	<h5 style="text-align: center;">@2018.学生单科成绩管理系统</h5>
+</div>
+	<script src="static/assets/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
+	<script src="static/js/axios.min.js"></script>
+	<script>
+	function getCookie(name) {
+		const value = `; ${document.cookie}`;
+		const parts = value.split(`; ${name}=`);
+		if (parts.length === 2) {
+			return parts.pop().split(';').shift(); // 返回 Cookie 的值
+		}
+		return null; // 如果没有找到，返回 null
+	}
+
+	// 使用示例
+	const studentId = getCookie('studentId');
+	axios({
+		url: "http://localhost:8080/studentscore/selectById",
+		method: "post",
+		data: {
+			studentId: studentId
+		}
+	}).then((result) => {
+		if (result.data.status === 200) {
+			const scoresArray = result.data.data; // 这是一个数组
+			//console.log(scoresArray);
+			if (scoresArray.length > 0) {
+				renderScores(scoresArray[0]); // 取第一个学生的成绩
+			} else {
+				alert("未找到成绩数据");
+			}
+		} else {
+			alert("查询错误，请联系老师");
+		}
+	}).catch((error) => {
+		console.error('查询请求失败:', error);
+		alert("网络错误，请稍后再试。");
+	});
+
+	// 渲染成绩到页面
+	function renderScores(scores) {
+		//console.log('Rendering scores:', scores);  // 打印传入的成绩数据
+
+		// 更新习题成绩
+		const exerciseGradesElement = document.getElementById('exerciseGrades');
+		if (exerciseGradesElement) {
+			const exerciseValue = scores.exerciseGrades !== undefined && scores.exerciseGrades !== null ? scores.exerciseGrades : '--';
+			exerciseGradesElement.querySelector('.score-value').textContent = exerciseValue;
+		} else {
+			console.error('未找到习题成绩元素');
+		}
+
+		// 更新测验成绩
+		const testScoreElement = document.getElementById('testScore');
+		if (testScoreElement) {
+			const testValue = scores.testScore !== undefined && scores.testScore !== null ? scores.testScore : '--';
+			testScoreElement.querySelector('.score-value').textContent = testValue;
+		} else {
+			console.error('未找到测验成绩元素');
+		}
+
+		// 更新考试成绩
+		const examinationResultsElement = document.getElementById('examinationResults');
+		if (examinationResultsElement) {
+			const examValue = scores.examinationResults !== undefined && scores.examinationResults !== null ? scores.examinationResults : '--';
+			examinationResultsElement.querySelector('.score-value').textContent = examValue;
+		} else {
+			console.error('未找到考试成绩元素');
+		}
+
+		// 更新总成绩
+		const totalScoreElement = document.getElementById('totalScore');
+		if (totalScoreElement) {
+			const totalValue = scores.totalScore !== undefined && scores.totalScore !== null ? scores.totalScore : '--';
+			totalScoreElement.querySelector('.score-value').textContent = totalValue;
+
+			// 更新总成绩状态
+			const scoreStatusElement = totalScoreElement.querySelector('.score-status');
+			if (scoreStatusElement) {
+				if (totalValue !== '--') {
+					scoreStatusElement.textContent = '已计算';
+				} else {
+					scoreStatusElement.textContent = '未计算';
+				}
+			}
+		} else {
+			console.error('未找到总成绩元素');
+		}
+	}
+</script>
+
+</body>
+</html>

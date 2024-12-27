@@ -9,8 +9,8 @@
 	content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 <title>添加成绩</title>
 <link rel="stylesheet" type="text/css"
-	href="assets/admin/layui/css/layui.css" />
-<link rel="stylesheet" type="text/css" href="assets/admin/css/admin.css" />
+	href="static/assets/layui/css/layui.css" />
+<link rel="stylesheet" type="text/css" href="static/assets/css/admin.css" />
 </head>
 
 <body>
@@ -56,8 +56,8 @@
 
 		<hr></hr>
 		<h5 style="text-align: center;">@2018.学生单科成绩管理系统</h5>
-		<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
-		<script src="assets/js/axios.min.js"></script>
+		<script src="static/assets/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/js/axios.min.js"></script>
 		<script>
 			//添加
 			document.querySelector(".layui-btn-normal").addEventListener("click", function(event){
@@ -65,11 +65,12 @@
 				let studentId=document.querySelector("#studentId").value;
 				let scoreType=document.querySelector("#scoreType").value;
 				let  scorevalue=document.querySelector("#scorevalue").value;
+				console.log(studentId+scoreType+scorevalue)
 				axios({
 					url:"http://localhost:8080/score/addscore",
 					method:"post",
 					data:{
-						studentId:studentId,
+						studentName:studentId,
 						scoreType:scoreType,
 						scoreValue:scorevalue
 					}

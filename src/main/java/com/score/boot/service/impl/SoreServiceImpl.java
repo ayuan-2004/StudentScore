@@ -1,9 +1,11 @@
 package com.score.boot.service.impl;
 
 import com.score.boot.dao.TScoreMapper;
+import com.score.boot.model.dto.Pagedto;
 import com.score.boot.model.dto.scoredto;
 import com.score.boot.model.vo.Scorevo;
 import com.score.boot.model.vo.TotalPerformance;
+import com.score.boot.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +20,14 @@ public class SoreServiceImpl implements IScoreService {
 	@Autowired
 	private TScoreMapper tScoreMapper;
 
-	@Override
-	public List<Scorevo> selectAllScore() {
-		List<Scorevo> scorevos = tScoreMapper.selectAllScore();
-		if (scorevos != null){
-			return scorevos;
-		}else {
-			return new ArrayList<>();
-		}
+
+	@Override public PageResult<Scorevo> selectAllScore(Pagedto pagedto) {
+		//总条数
+		Long total = tScoreMapper.scoreTotal();
+		//计算偏移量(起始索引) （查询页码-1）*每页显示记录数。
+		int offset=(pagedto.getPageNum()-1)*pagedto.getPageSize();
+		List<Scorevo> scorevos = tScoreMapper.selectAllScore(pagedto.getPageSize(), offset);
+		return new PageResult<>(scorevos,pagedto.getPageNum(),pagedto.getPageSize(),total);
 	}
 
 	@Override public int updateScore(scoredto scoredto) {
@@ -55,21 +57,22 @@ public class SoreServiceImpl implements IScoreService {
 		}
 	}
 
-	@Override public List<TotalPerformance> selectTotalPerformance() {
-		List<TotalPerformance> totalPerformances = tScoreMapper.selectTotalPerformance();
-		if (totalPerformances != null){
-			return totalPerformances;
-		}else {
-			return new ArrayList<>();
-		}
+	@Override
+	public PageResult<TotalPerformance> selectTotalPerformance(Pagedto pagedto) {
+		Long total = tScoreMapper.TotalPerformance();
+		//计算偏移量(起始索引) （查询页码-1）*每页显示记录数。
+		int offset=(pagedto.getPageNum()-1)*pagedto.getPageSize();
+		List<TotalPerformance> totalPerformances = tScoreMapper.selectTotalPerformance(pagedto.getPageSize(), offset);
+		return new PageResult<>(totalPerformances,pagedto.getPageNum(),pagedto.getPageSize(),total);
 	}
+
 
 	@Override public List<TotalPerformance> selectScoreByStudentName(String studentName) {
 		List<TotalPerformance> totalPerformances = tScoreMapper.selectScoreByStudentName(studentName);
 		if (totalPerformances != null){
 			return totalPerformances;
 		}else {
-			return new ArrayList<>();
+			return null;
 		}
 	}
 
@@ -78,7 +81,25 @@ public class SoreServiceImpl implements IScoreService {
 		if (scorevos != null){
 			return scorevos;
 		}else {
-			return new ArrayList<>();
+			return null;
+		}
+	}
+
+	@Override public List<TotalPerformance> selectTotalPerformanceById(int studentId) {
+		List<TotalPerformance> totalPerformances = tScoreMapper.selectTotalPerformanceById(studentId);
+		if (totalPerformances != null){
+			return totalPerformances;
+		}else {
+			return null;
+		}
+	}
+
+	@Override public List<Scorevo> selectStudentAllScore(int studentId) {
+		List<Scorevo> scorevos = tScoreMapper.selectStudentAllScore(studentId);
+		if (scorevos != null){
+			return scorevos;
+		}else {
+			return null;
 		}
 	}
 }

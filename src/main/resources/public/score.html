@@ -9,13 +9,13 @@
 	content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 <title>网站后台管理模版</title>
 <link rel="stylesheet" type="text/css"
-	href="assets/admin/layui/css/layui.css" />
-<link rel="stylesheet" type="text/css" href="assets/admin/css/admin.css" />
+	href="static/assets/layui/css/layui.css" />
+<link rel="stylesheet" type="text/css" href="static/assets/css/admin.css" />
 </head>
 
 <body>
 	<div class="page-content-wrap" id="studentSearch">
-	<h5 style="text-align:center;font-size: 20px;line-height: 25px;color:#666">学生成绩信息查询界面</h5>
+	<h5 style="text-align:center;font-size: 20px;line-height: 25px;color:#666">学生个人成绩信息查询界面</h5>
 		<hr>
 		<div class="layui-form-item">
 
@@ -24,19 +24,65 @@
 				<thead>
 					<tr>
 						<th lay-data="{type:'checkbox', }"></th>
-						<th lay-data="{field:'scoreId',sort: true}">成绩编号</th>
+<!--						<th lay-data="{field:'scoreId',sort: true}">成绩编号</th>-->
 						<th lay-data="{field:'studentName'}">姓名</th>
 						<th lay-data="{field:'scoreTypeName'}">考试类型</th>
 						<th lay-data="{field:'scoreValue'}">成绩</th>
 					</tr>
 				</thead>
+				<tbody id="scoreTableBody">
+				<!-- 渲染的内容将插入到这里 -->
+				</tbody>
 			</table>
 		</div>
 		<hr></hr>
 		<h5 style="text-align: center;">@2018.学生单科成绩管理系统</h5>
-		<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
-		<script src="assets/js/axios.min.js"></script>
+		<script src="static/assets/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/js/axios.min.js"></script>
+		<script>
+			function getCookie(name) {
+				const value = `; ${document.cookie}`;
+				const parts = value.split(`; ${name}=`);
+				if (parts.length === 2) {
+					return parts.pop().split(';').shift(); // 返回 Cookie 的值
+				}
+				return null; // 如果没有找到，返回 null
+			}
+			const studentId = getCookie('studentId');
+			let data = [];
+			axios({
+				url:"http://localhost:8080/studentscore/selectStudentAllScore",
+				method:"post",
+				data:{
+					studentId:studentId
+				}
+			}).then((result)=>{
+				console.log(result)
+				if (result.data.status===200){
+					data=result.data.data;
+					renderScores(data)
+				}
+			}).catch((error) => {
+				console.error('查询请求失败:', error);
+				alert("网络错误，请稍后再试。");
+			});
+			// 渲染成绩到表格
+			function renderScores(data) {
+				const scoreTableBody = document.getElementById('scoreTableBody');
+				scoreTableBody.innerHTML = ''; // 清空现有内容
 
+				data.forEach(data => {
+					const row = document.createElement('tr'); // 创建新行
+					row.innerHTML = `
+            <td><input type="checkbox"></td>
+            <td>${data.studentName}</td>
+            <td>${data.scoreTypeName}</td>
+            <td>${data.scoreValue}</td>
+        `;
+					scoreTableBody.appendChild(row); // 将新行添加到表格主体
+				});
+			}
+		</script>
 	</div>
 </body>
 </html>

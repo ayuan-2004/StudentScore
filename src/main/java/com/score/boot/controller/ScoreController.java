@@ -2,11 +2,13 @@ package com.score.boot.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.score.boot.model.dto.Pagedto;
 import com.score.boot.model.dto.Studentdtn;
 import com.score.boot.model.dto.scoredto;
 import com.score.boot.model.vo.Scorevo;
 import com.score.boot.model.vo.TotalPerformance;
 import com.score.boot.service.IScoreService;
+import com.score.boot.util.PageResult;
 import com.score.boot.util.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,17 +26,10 @@ public class ScoreController {
 	private IScoreService scoreService;
 	//查询所有学生成绩
 	@RequestMapping("/selectAllScore")
-	public ResponseUtils selectAll() {
-		try{
-			List<Scorevo> tScorevos = scoreService.selectAllScore();
-			if (tScorevos != null){
-				return new ResponseUtils<>(200,"查询成功", tScorevos);
-			}else {
-				return new ResponseUtils<>(501,"查询失败");
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	public ResponseUtils selectAll(@RequestBody Pagedto pagedto) {
+		PageResult<Scorevo> scorevoPageResult = scoreService.selectAllScore(pagedto);
+		System.out.println(scorevoPageResult);
+		return new ResponseUtils<>(200,"查询成功",scorevoPageResult);
 	}
 	//修改学生成绩
 	@RequestMapping("/updateScore")
@@ -80,17 +75,9 @@ public class ScoreController {
 	}
 	//查询学生总成绩
 	@RequestMapping("/selectTotalPerformance")
-	public ResponseUtils selectTotalPerformance(){
-		try{
-			List<TotalPerformance> totalPerformances = scoreService.selectTotalPerformance();
-			if (totalPerformances != null){
-				return new ResponseUtils<>(200,"查询成功", totalPerformances);
-			}else {
-				return new ResponseUtils<>(501,"查询失败");
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	public ResponseUtils selectTotalPerformance(@RequestBody Pagedto pagedto){
+		PageResult<TotalPerformance> totalPerformancePageResult = scoreService.selectTotalPerformance(pagedto);
+		return new ResponseUtils<>(200,"查询成功",totalPerformancePageResult);
 	}
 	//模糊查询--总成绩
 	@RequestMapping("/selectScoreByStudentName")

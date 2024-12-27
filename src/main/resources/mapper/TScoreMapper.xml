@@ -22,6 +22,12 @@
     <sql id="Base_Column_List">
         score_id, student_id, score_type, score_value
     </sql>
+    <select id="scoreTotal" resultType="java.lang.Long">
+        SELECT COUNT(*) from t_score
+    </select>
+    <select id="TotalPerformance" resultType="java.lang.Long">
+        SELECT COUNT(*) from t_student
+    </select>
     <select id="selectAllScore" resultMap="BaseResultMap">
         SELECT
             CASE
@@ -32,8 +38,15 @@
                 END AS score_type_name,
             t_student.student_name, t_score.*
         FROM t_student
-                 INNER JOIN t_score on t_student.student_no=t_score.student_id;
+                 INNER JOIN t_score on t_student.student_no=t_score.student_id
+        limit #{offset},#{pageSize}
     </select>
+    <insert id="addScore" parameterType="com.score.boot.model.dto.scoredto">
+        INSERT INTO t_score (score_id, score_value, score_type, student_id)
+        SELECT NULL, #{scoredto.scoreValue}, #{scoredto.scoreType}, student_no
+        FROM t_student
+        WHERE student_name = #{scoredto.studentName};
+    </insert>
     <update id="updateScore" parameterType="com.score.boot.model.dto.scoredto">
         UPDATE t_score
             JOIN t_student ON t_student.student_no = t_score.student_id
@@ -55,7 +68,8 @@
                 LEFT JOIN
             t_score sc ON s.student_no = sc.student_id
         GROUP BY
-            s.student_no, s.student_name;
+            s.student_no, s.student_name
+        limit #{offset},#{pageSize}
     </select>
     <select id="selectScoreByStudentName" resultMap="totalScoreMap" parameterType="string">
         SELECT
@@ -89,5 +103,37 @@
                  INNER JOIN t_score on t_student.student_no=t_score.student_id
         where
             t_student.student_name like concat('%',#{studentName},'%');
+    </select>
+    <select id="selectTotalPerformanceById" resultMap="totalScoreMap">
+        SELECT
+            s.student_no,
+            s.student_name,
+            SUM(CASE WHEN score_type = 1 THEN score_value ELSE 0 END) AS exercise_grades,
+            SUM(CASE WHEN score_type = 2 THEN score_value ELSE 0 END) AS test_score,
+            SUM(CASE WHEN score_type = 3 THEN score_value ELSE 0 END) AS examination_results,
+            (SUM(CASE WHEN score_type = 1 THEN score_value ELSE 0 END) * 0.1 +
+             SUM(CASE WHEN score_type = 2 THEN score_value ELSE 0 END) * 0.2 +
+             SUM(CASE WHEN score_type = 3 THEN score_value ELSE 0 END) * 0.7) AS total_score
+        FROM
+            t_student s
+                LEFT JOIN
+            t_score sc ON s.student_no = sc.student_id
+        where student_id=#{studentId}
+        GROUP BY
+            s.student_no, s.student_name;
+
+    </select>
+    <select id="selectStudentAllScore" resultMap="BaseResultMap">
+        SELECT
+            CASE
+                WHEN score_type = 1 THEN '习题'
+                WHEN score_type = 2 THEN '测验'
+                WHEN score_type = 3 THEN '考试'
+                ELSE '未知'
+                END AS score_type_name,
+            t_student.student_name, t_score.*
+        FROM t_student
+                 INNER JOIN t_score on t_student.student_no=t_score.student_id
+        where student_id=#{studentId};
     </select>
 </mapper>

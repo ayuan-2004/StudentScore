@@ -9,8 +9,44 @@
 	content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 <title>网站后台管理模版</title>
 <link rel="stylesheet" type="text/css"
-	href="assets/admin/layui/css/layui.css" />
-<link rel="stylesheet" type="text/css" href="assets/admin/css/admin.css" />
+	href="static/assets/layui/css/layui.css" />
+<link rel="stylesheet" type="text/css" href="static/assets/css/admin.css" />
+	<style>
+		.search-container {
+			position: relative;
+		}
+
+		.search-results {
+			display: none;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			background: #fff;
+			border: 1px solid #e6e6e6;
+			border-top: none;
+			max-height: 200px;
+			overflow-y: auto;
+			z-index: 999;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		}
+
+		.search-item {
+			padding: 8px 10px;
+			cursor: pointer;
+			transition: background-color 0.2s;
+		}
+
+		.search-item:hover {
+			background-color: #f2f2f2;
+		}
+
+		.search-empty {
+			padding: 8px 10px;
+			color: #999;
+			text-align: center;
+		}
+	</style>
 </head>
 
 <body>
@@ -30,8 +66,13 @@
 				</button> -->
 			</div>
 			<div class="layui-inline">
-				<input type="text" id="studentNameSearch" placeholder="请输入学生姓名"
-					autocomplete="off" class="layui-input">
+				<div class="layui-input-inline search-container">
+					<input type="text" id="studentNameSearch"
+						   placeholder="请输入学生姓名"
+						   autocomplete="off"
+						   class="layui-input">
+					<div id="searchResults" class="search-results"></div>
+				</div>
 			</div>
 			<button class="layui-btn layui-btn-normal site-demo-active"
 					data-type="search" id="searchStudent" onclick="search()">搜索</button>
@@ -52,21 +93,52 @@
 			<!--	获取到的数据渲染在这里			-->
 				</tbody>
 			</table>
+			<!-- 分页结构 -->
+			<div class="pagination-container">
+				<div class="layui-box layui-laypage layui-laypage-default">
+					<a href="javascript:;" class="layui-laypage-prev" onclick="getAccountScore(currentPage-1)">上一页</a>
+					<span class="layui-laypage-curr">
+           				 第<span id="currentPage">1</span> / <span id="totalPages">1</span> 页
+        			</span>
+					<a href="javascript:;" class="layui-laypage-next" onclick="getAccountScore(currentPage+1)">下一页</a>
+					<span class="layui-laypage-skip">
+            			到第 <input type="text" id="pageInput"> 页
+            			<button onclick="jumpToPage()">确定</button>
+        			</span>
+				</div>
+			</div>
 		</div>
 			<!--	注：本界面所有成绩为计算后的成绩,习题按照16次计算|测验按3次计算|考试成绩按一次计算,未录入成绩的按照0分计算,总成绩计算方式（习题占比10%,测验占比20%,考试占比70%）-->
 		<hr></hr>
 		<h5 style="text-align: center;">@2018.学生单科成绩管理系统</h5>
-		<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
-		<script src="assets/js/axios.min.js"></script>
+		<script src="static/assets/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
+		<script src="static/js/axios.min.js"></script>
 		<script>
+			// 分页变量
+			let currentPage = 1;
+			let totalPages = 0;
+			const pageSize = 10;
 			let totalScore=[];
-			document.addEventListener('DOMContentLoaded', function() {
+			function getAccountScore(page){
+				currentPage=page;
 				axios({
 					url:"http://localhost:8080/score/selectTotalPerformance",
-					method:"post"
+					method:"post",
+					data: {
+						pageNum:currentPage,
+						pageSize:pageSize
+					}
 				}).then((result)=>{
 					if(result.data && result.data.status == 200){
-						totalScore=result.data.data;
+						// 更新分页信息
+						currentPage = page;
+						totalPages = Math.ceil(result.data.data.total/ pageSize);
+
+						// 更新UI
+						updatePaginationUI();
+
+						// 获取返回的数据
+						totalScore=result.data.data.list;
 						//清除tbody数据
 						const tableBody = document.querySelector("#tbody");
 
@@ -83,7 +155,64 @@
 					console.error('请求失败:', error);
 					alert("网络错误，请稍后再试。");
 				});
-			})
+			}
+
+			// 更新分页UI
+			function updatePaginationUI() {
+				// 获取分页元素
+				const currentPageEl = document.getElementById('currentPage');
+				const totalPagesEl = document.getElementById('totalPages');
+
+				if (!currentPageEl || !totalPagesEl) {
+					console.error('找不到分页元素');
+					return;
+				}
+
+				// 更新页码显示
+				currentPageEl.textContent = currentPage;
+				totalPagesEl.textContent = totalPages;
+
+				// 更新按钮状态
+				const prevBtn = document.querySelector('.layui-laypage-prev');
+				const nextBtn = document.querySelector('.layui-laypage-next');
+
+				if (prevBtn) {
+					if (currentPage === 1) {
+						prevBtn.classList.add('layui-disabled');
+					} else {
+						prevBtn.classList.remove('layui-disabled');
+					}
+				}
+
+				if (nextBtn) {
+					if (currentPage === totalPages) {
+						nextBtn.classList.add('layui-disabled');
+					} else {
+						nextBtn.classList.remove('layui-disabled');
+					}
+				}
+			}
+
+			// 跳转到指定页
+			function jumpToPage() {
+				const input = document.getElementById('pageInput');
+				if (!input) {
+					console.error('找不到页码输入框');
+					return;
+				}
+
+				const page = parseInt(input.value);
+				if (isNaN(page) || page < 1 || page > totalPages) {
+					alert('请输入有效的页码！');
+					return;
+				}
+
+				getAccountScore(page);
+				input.value = '';
+			}
+			document.addEventListener('DOMContentLoaded', function() {
+				getAccountScore(1);
+			});
 			//模糊查询
 			function search(){
 				let studentNameSearch=document.querySelector("#studentNameSearch").value;
@@ -163,6 +292,46 @@
 					// 将新创建的行添加到表格主体
 					tableBody.appendChild(row);
 				});
+			}
+			//补充搜索下拉框
+			document.addEventListener('DOMContentLoaded', function() {
+				const studentNameSearch=document.querySelector("#studentNameSearch");
+				const searchResults=document.querySelector("#searchResults");
+				let debounceTimer;
+
+				// 监听输入事件
+				searchInput.addEventListener('input', function(e) {
+					const keyword = e.target.value.trim();
+
+					// 清除之前的定时器
+					clearTimeout(debounceTimer);
+
+					// 如果输入为空，隐藏结果框
+					if (!keyword) {
+						searchResults.style.display = 'none';
+						return;
+					}
+
+					// 防抖：延迟300ms执行搜索
+					debounceTimer = setTimeout(() => {
+						searchStudents(keyword);
+					}, 300)
+				})
+			})
+			// 点击其他地方时隐藏结果框
+			document.addEventListener('click', function(e) {
+				if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+					searchResults.style.display = 'none';
+				}
+			});
+			function srechName(keyword){
+				axios({
+					url:"http://localhost:8080/student/srechName",
+					method:"post",
+					data:{
+						studentName: keyword
+					}
+				})
 			}
 		</script>
 	</div>

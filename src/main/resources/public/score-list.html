@@ -9,8 +9,8 @@
 	content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 <title>网站后台管理模版</title>
 <link rel="stylesheet" type="text/css"
-	href="assets/admin/layui/css/layui.css" />
-<link rel="stylesheet" type="text/css" href="assets/admin/css/admin.css" />
+	href="static/assets/layui/css/layui.css" />
+<link rel="stylesheet" type="text/css" href="static/assets/css/admin.css" />
 </head>
 
 <body>
@@ -42,28 +42,20 @@
 				<!--	渲染的位置			-->
 				</tbody>
 			</table>
-			<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="right-font08">
-				<tr>
-					<td width="50%">共 <span class="right-text09" id="totalPages">0</span> 页 | 第 <span class="right-text09"
-																										 id="currentPage">1</span> 页</td>
-					<td width="49%" align="right">
-						[<a href="javascript:void(0)" onclick="changePage(1)" class="right-font08">首页</a> |
-						<a href="javascript:void(0)" onclick="changePage(currentPage-1)" class="right-font08">上一页</a> |
-						<a href="javascript:void(0)" onclick="changePage(currentPage+1)" class="right-font08">下一页</a> |
-						<a href="javascript:void(0)" onclick="changePage(totalPages)" class="right-font08">末页</a>]
-						转至：
-					</td>
-					<td width="1%">
-						<table width="20" border="0" cellspacing="0" cellpadding="0">
-							<tr>
-								<td width="1%"><input name="pageNum" type="text" class="right-textfield03" size="1" /></td>
-								<td width="87%"><input name="Submit23222" type="button" class="right-button06" value=" "
-													   onclick="goToPage()" /></td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-			</table>
+			<!-- 分页结构 -->
+			<div class="pagination-container">
+				<div class="layui-box layui-laypage layui-laypage-default">
+					<a href="javascript:;" class="layui-laypage-prev" onclick="getScore(currentPage-1)">上一页</a>
+					<span class="layui-laypage-curr">
+           				 第<span id="currentPage">1</span> / <span id="totalPages">1</span> 页
+        			</span>
+					<a href="javascript:;" class="layui-laypage-next" onclick="getScore(currentPage+1)">下一页</a>
+					<span class="layui-laypage-skip">
+            			到第 <input type="text" id="pageInput"> 页
+            			<button onclick="jumpToPage()">确定</button>
+        			</span>
+				</div>
+			</div>
 		</div>
 		<script type="text/html" id="barDemo">
 			<a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="detail">查看</a>
@@ -74,43 +66,121 @@
 		<h5 style="text-align: center;">@2018.学生单科成绩管理系统</h5>
 	</div>
 <!--	<script src="assets/admin/layui/layui.all.js" type="text/javascript" charset="utf-8"></script>-->
-	<script src="assets/js/axios.min.js"></script>
+	<script src="static/js/axios.min.js"></script>
 	<script>
-		//分页
-		// 定义分页相关变量
-		let currentPage = 1;//当前页
-		let totalPages = 0; //总页数
-		const pageSize = 10; // 每页显示的记录数
-		var data=[];
-		// 查询所有成绩
-		axios({
-			url: "http://localhost:8080/score/selectAllScore",
-			method: "post"
-		}).then((result) => {
-			if (result.data.status == 200) {
-				// 获取返回的数据
-				data = result.data.data;
-				console.log(result.data.total)
-				renderScoreTable(data);
+		// 分页变量
+		let currentPage = 1;
+		let totalPages = 0;
+		const pageSize = 10;
+		let data = [];
 
-			} else {
-				alert("查询失败");
+		// 获取成绩数据
+		function getScore(page) {
+			//console.log('开始获取第', page, '页数据');
+			currentPage = page;
+
+			axios({
+				url: "http://localhost:8080/score/selectAllScore",
+				method: "post",
+				data: {
+					pageNum: page,
+					pageSize: pageSize
+				}
+			}).then((result) => {
+				//console.log('接收到数据：', result);
+
+				if (result.data.status == 200) {
+					// 更新分页信息
+					currentPage = page;
+					totalPages = Math.ceil(result.data.data.total / pageSize);
+
+					// 更新UI
+					updatePaginationUI();
+
+					// 获取返回的数据
+					data = result.data.data.list;
+					renderScoreTable(data);
+				} else {
+					console.error('查询失败：', result.data);
+					alert("查询失败");
+				}
+			}).catch((error) => {
+				console.error('查询请求失败:', error);
+				alert("网络错误，请稍后再试。");
+			});
+		}
+
+		// 更新分页UI
+		function updatePaginationUI() {
+			// 获取分页元素
+			const currentPageEl = document.getElementById('currentPage');
+			const totalPagesEl = document.getElementById('totalPages');
+
+			if (!currentPageEl || !totalPagesEl) {
+				console.error('找不到分页元素');
+				return;
 			}
-		}).catch((error) => {
-			console.error('查询请求失败:', error);
-			alert("网络错误，请稍后再试。");
+
+			// 更新页码显示
+			currentPageEl.textContent = currentPage;
+			totalPagesEl.textContent = totalPages;
+
+			// 更新按钮状态
+			const prevBtn = document.querySelector('.layui-laypage-prev');
+			const nextBtn = document.querySelector('.layui-laypage-next');
+
+			if (prevBtn) {
+				if (currentPage === 1) {
+					prevBtn.classList.add('layui-disabled');
+				} else {
+					prevBtn.classList.remove('layui-disabled');
+				}
+			}
+
+			if (nextBtn) {
+				if (currentPage === totalPages) {
+					nextBtn.classList.add('layui-disabled');
+				} else {
+					nextBtn.classList.remove('layui-disabled');
+				}
+			}
+		}
+
+		// 跳转到指定页
+		function jumpToPage() {
+			const input = document.getElementById('pageInput');
+			if (!input) {
+				console.error('找不到页码输入框');
+				return;
+			}
+
+			const page = parseInt(input.value);
+			if (isNaN(page) || page < 1 || page > totalPages) {
+				alert('请输入有效的页码！');
+				return;
+			}
+
+			getScore(page);
+			input.value = '';
+		}
+
+		// 页面加载完成后初始化
+		document.addEventListener('DOMContentLoaded', function() {
+			console.log('页面加载完成，开始初始化');
+			getScore(1);
 		});
-		//渲染
-		function renderScoreTable(data){
-			// 渲染表格
-			var table = document.querySelector('.layui-table');
-			//console.log(table); // 打印table对象
-			var tbody = table.querySelector('tbody');
-			//console.log(tbody); // 打印tbody对象
-			tbody.innerHTML = '';
-			data.forEach(function(score) {
-				var tr = document.createElement('tr');
-				tr.innerHTML = `
+			//渲染
+			function renderScoreTable(data){
+				// 渲染表格
+				var table = document.querySelector('.layui-table');
+				//console.log(table); // 打印table对象
+				var tbody = table.querySelector('tbody');
+				//console.log(tbody); // 打印tbody对象
+				tbody.innerHTML = '';
+
+				data.forEach(function(score) {
+					var tr = document.createElement('tr');
+					tr.innerHTML = `
 							<td><input type="checkbox"></td>
 							<td>${score.scoreId}</td>
 							<td>${score.studentName}</td>
@@ -122,82 +192,81 @@
 								<a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del" onclick="deleteScore(${score.scoreId})">删除</a>
 							</td>
 						`;
-				tbody.appendChild(tr);
-			});
-		}
-		//添加
-		function addScore(){
-			location.href="score-add.html"
-		}
-		//编辑
-		function updateScore(scoreId){
-			const score = data.find(s => s.scoreId === scoreId);
-			if (score) {
-				// 跳转到编辑页面，并通过 URL 参数传递学生信息
-				location.href = `score-edit.html?scoreId=${encodeURIComponent(score.scoreId)}&studentName=${encodeURIComponent(score.studentName)}&scoreTypeName=${encodeURIComponent(score.scoreTypeName)}&scoreValue=${encodeURIComponent(score.scoreValue)}`;
-			} else {
-				alert("没有该学生相关成绩");
+					tbody.appendChild(tr);
+				});
 			}
-		}
-		//查看
-		function viewScore(scoreId){
-			// 根据 scoreId 查找对应的学生数据
-			const score = data.find(s => s.scoreId === scoreId);
-			if (score) {
-				// 跳转到编辑页面，并通过 URL 参数传递学生信息
-				location.href = `score-detail.html?scoreId=${encodeURIComponent(score.scoreId)}&studentName=${encodeURIComponent(score.studentName)}&scoreTypeName=${encodeURIComponent(score.scoreTypeName)}&scoreValue=${encodeURIComponent(score.scoreValue)}`;
-			} else {
-				alert("没有该学生相关成绩");
+			//添加
+			function addScore(){
+				location.href="score-add.html"
 			}
-		}
+			//编辑
+			function updateScore(scoreId){
+				const score = data.find(s => s.scoreId === scoreId);
+				if (score) {
+					// 跳转到编辑页面，并通过 URL 参数传递学生信息
+					location.href = `score-edit.html?scoreId=${encodeURIComponent(score.scoreId)}&studentName=${encodeURIComponent(score.studentName)}&scoreTypeName=${encodeURIComponent(score.scoreTypeName)}&scoreValue=${encodeURIComponent(score.scoreValue)}`;
+				} else {
+					alert("没有该学生相关成绩");
+				}
+			}
+			//查看
+			function viewScore(scoreId){
+				// 根据 scoreId 查找对应的学生数据
+				const score = data.find(s => s.scoreId === scoreId);
+				if (score) {
+					// 跳转到编辑页面，并通过 URL 参数传递学生信息
+					location.href = `score-detail.html?scoreId=${encodeURIComponent(score.scoreId)}&studentName=${encodeURIComponent(score.studentName)}&scoreTypeName=${encodeURIComponent(score.scoreTypeName)}&scoreValue=${encodeURIComponent(score.scoreValue)}`;
+				} else {
+					alert("没有该学生相关成绩");
+				}
+			}
 
-		// 删除
-		function deleteScore(scoreId) {
-			const score = data.find(s => s.scoreId === scoreId);
-			if (score && confirm("确定删除该学生的成绩？")) {
+			// 删除
+			function deleteScore(scoreId) {
+				const score = data.find(s => s.scoreId === scoreId);
+				if (score && confirm("确定删除该学生的成绩？")) {
+					axios({
+						url: "http://localhost:8080/score/dalateScore",
+						method: "delete",
+						data: {
+							scoreId: scoreId
+						}
+					}).then((result) => {
+						if (result.data && result.data.status === 200) {
+							alert("删除成功");
+							location.reload();//手动刷新
+						} else {
+							alert("删除失败");
+						}
+					}).catch((error) => {
+						console.error('删除请求失败:', error);
+						alert("网络错误，请稍后再试。");
+					});
+				}
+			}
+			//模糊查询
+			function search() {
+				let studentNameSearch = document.querySelector("#studentNameSearch").value;
 				axios({
-					url: "http://localhost:8080/score/dalateScore",
-					method: "delete",
-					data: {
-						scoreId: scoreId
+					url: "http://localhost:8080/score/selectScoreByStudent",
+					method: "post",
+					data:{
+						studentName: studentNameSearch
 					}
 				}).then((result) => {
-					if (result.data && result.data.status === 200) {
-						alert("删除成功");
-						location.reload();//手动刷新
+					if (result.data.status == 200) {
+						// 获取返回的数据
+						data = result.data.data;
+						renderScoreTable(data);
+
 					} else {
-						alert("删除失败");
+						alert("查询失败");
 					}
 				}).catch((error) => {
-					console.error('删除请求失败:', error);
+					console.error('查询请求失败:', error);
 					alert("网络错误，请稍后再试。");
 				});
 			}
-		}
-		//模糊查询
-		function search() {
-			let studentNameSearch = document.querySelector("#studentNameSearch").value;
-			axios({
-				url: "http://localhost:8080/score/selectScoreByStudent",
-				method: "post",
-				data:{
-					studentName: studentNameSearch
-				}
-			}).then((result) => {
-				if (result.data.status == 200) {
-					// 获取返回的数据
-					data = result.data.data;
-					renderScoreTable(data);
-
-				} else {
-					alert("查询失败");
-				}
-			}).catch((error) => {
-				console.error('查询请求失败:', error);
-				alert("网络错误，请稍后再试。");
-			});
-		}
-
 	</script>
 </body>
 
